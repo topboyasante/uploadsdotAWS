@@ -25,7 +25,7 @@ class OutputFormatDto {
 export class StartTranscodingDto {
   @ApiProperty({
     description: 'S3 key of the input video file',
-    example: 'uploads/1735123456789-abc123.mp4',
+    example: 'd/course/course_456/video_1735123456789.mp4',
   })
   @IsString()
   inputS3Key: string;

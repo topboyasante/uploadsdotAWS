@@ -47,6 +47,19 @@ export class S3Service {
       ? `uploads/${timestamp}-${uniqueId}.${fileExtension}`
       : `uploads/${timestamp}-${uniqueId}`;
 
+    return this.GenerateUploadURLWithKey(key, contentType);
+  }
+
+  /**
+   * Generates a presigned URL for uploading files to S3 with a custom key
+   * @param key - The S3 key to use for the file
+   * @param contentType - Optional content type for the file
+   * @returns Object containing the presigned URL and the key
+   */
+  async GenerateUploadURLWithKey(
+    key: string,
+    contentType?: string,
+  ): Promise<{ url: string; key: string }> {
     // Create the PutObject command for S3
     const command = new PutObjectCommand({
       Bucket: this.configService.getOrThrow<string>('aws.s3.videoInputBucket'),
@@ -90,6 +103,25 @@ export class S3Service {
       ? `uploads/${timestamp}-${uniqueId}.${fileExtension}`
       : `uploads/${timestamp}-${uniqueId}`;
 
+    return this.GenerateMultipartUploadURLWithKey(partCount, key, contentType);
+  }
+
+  /**
+   * Initiates a multipart upload and generates presigned URLs for each part with a custom key
+   * @param partCount - Number of parts to create presigned URLs for
+   * @param key - The S3 key to use for the file
+   * @param contentType - Optional content type for the file
+   * @returns Object containing upload ID, key, and array of presigned URLs for each part
+   */
+  async GenerateMultipartUploadURLWithKey(
+    partCount: number,
+    key: string,
+    contentType?: string,
+  ): Promise<{
+    uploadId: string;
+    key: string;
+    partUrls: { partNumber: number; url: string }[];
+  }> {
     // Create multipart upload
     const createCommand = new CreateMultipartUploadCommand({
       Bucket: this.configService.getOrThrow<string>('aws.s3.videoInputBucket'),

@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CreateUploadDto } from './dto/create-upload.dto';
 import { UpdateUploadDto } from './dto/update-upload.dto';
+import { GenerateUploadUrlDto } from './dto/generate-upload-url.dto';
+import { GenerateMultipartUploadUrlDto } from './dto/generate-multipart-upload-url.dto';
 import { S3Service } from '../../providers/s3/s3.service';
 import { MediaconvertService } from '../../providers/mediaconvert/mediaconvert.service';
 import { CloudfrontService } from '../../providers/cloudfront/cloudfront.service';
+import { generateFileKey } from '../../utils/file-key.util';
 
 @Injectable()
 export class UploadsService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly s3Service: S3Service,
     private readonly mediaconvertService: MediaconvertService,
     private readonly cloudfrontService: CloudfrontService,
@@ -33,19 +38,17 @@ export class UploadsService {
   }
 
   // Upload methods
-  async generateUploadUrl(fileExtension?: string, contentType?: string) {
-    return this.s3Service.GenerateUploadURL(fileExtension, contentType);
+  async generateUploadUrl(dto: GenerateUploadUrlDto) {
+    const key = generateFileKey(this.configService, dto);
+    return this.s3Service.GenerateUploadURLWithKey(key, dto.contentType);
   }
 
-  async generateMultipartUploadUrl(
-    partCount: number,
-    fileExtension?: string,
-    contentType?: string,
-  ) {
-    return this.s3Service.GenerateMultipartUploadURL(
-      partCount,
-      fileExtension,
-      contentType,
+  async generateMultipartUploadUrl(dto: GenerateMultipartUploadUrlDto) {
+    const key = generateFileKey(this.configService, dto);
+    return this.s3Service.GenerateMultipartUploadURLWithKey(
+      dto.partCount,
+      key,
+      dto.contentType,
     );
   }
 

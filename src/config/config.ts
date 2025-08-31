@@ -1,6 +1,7 @@
 import { IAppConfig } from './config.interface';
 
 export const AppConfig = (): IAppConfig => ({
+  env: process.env.NODE_ENV || 'development',
   database: {
     url: process.env.DATABASE_URL || '',
   },

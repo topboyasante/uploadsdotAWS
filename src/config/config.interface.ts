@@ -1,4 +1,5 @@
 export interface IAppConfig {
+  env: string;
   database: {
     url: string;
   };
