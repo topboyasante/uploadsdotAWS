@@ -7,6 +7,9 @@ import { AppService } from './app.service';
 import { AppConfig } from './config/config';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { Upload } from './modules/uploads/entities/upload.entity';
+import { S3Module } from './providers/s3/s3.module';
+import { MediaconvertModule } from './providers/mediaconvert/mediaconvert.module';
+import { CloudfrontModule } from './providers/cloudfront/cloudfront.module';
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { Upload } from './modules/uploads/entities/upload.entity';
       inject: [ConfigService],
     }),
     UploadsModule,
+    S3Module,
+    MediaconvertModule,
+    CloudfrontModule,
   ],
   controllers: [AppController],
   providers: [AppService],
